@@ -1,0 +1,32 @@
+server:
+  port: 9000
+
+spring:
+  application:
+    name: ApiGatewayMicroservice
+  cloud:
+    gateway:
+      routes:
+        - id: USERSERVICES
+          uri: lb://USERSERVICES  # Ensure this matches the Eureka service name
+          predicates:
+            - Path=/user/**    # if more than one starting path (here only one which is user) then you do like this /user/**,/staff/**,and soon
+
+        - id: HOTELMICROSERVICE
+          uri: lb://HOTELMICROSERVICE
+          predicates:
+            - Path=/hotel/**
+
+        - id: RATINGMICROSERVICE-1
+          uri: lb://RATINGMICROSERVICE-1
+          predicates:
+            - Path=/ratings/**
+
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://localhost:8000/eureka/
+  instance:
+    prefer-ip-address: true  # Uses IP instead of hostname
